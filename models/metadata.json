@@ -1,0 +1,4 @@
+{
+  "best_regression": "random_forest",
+  "best_classification": "logistic_regression"
+}

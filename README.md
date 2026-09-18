@@ -1,45 +1,62 @@
 # Student Performance Data Science
 
-مشروع علم بيانات قابل لإعادة الإنتاج لتحليل أداء طلاب المرحلة الثانوية وبناء مهمتي **الانحدار** للتنبؤ بالدرجة النهائية و**التصنيف** إلى Low/Medium/High. يتضمن المشروع خط معالجة بيانات، مقارنة نماذج، تقييمًا عبر cross-validation، واختبارات وواجهة Streamlit.
+مشروع علم بيانات قابل لإعادة الإنتاج لتحليل أداء طلاب المرحلة الثانوية وبناء مهمتي **الانحدار** للتنبؤ بالدرجة النهائية و**التصنيف** إلى Low/Medium/High. يتضمن المشروع جمع البيانات، التنظيف، EDA، اختبارات إحصائية، هندسة ميزات، مقارنة نماذج، GridSearch، تحليل أخطاء، SHAP، Dashboard، API، اختبارات، وتوثيق أكاديمي.
 
-## نطاق النسخة الأولى
+## البيانات والحدود
 
-تستخدم النسخة الحالية ملف الرياضيات من مجموعة **UCI Student Performance**. لا تستخدم `G1` أو `G2` كمدخلات عند التنبؤ بـ`G3` لأنهما درجات مرحلية قد تسبب تسربًا أو لا تكون متاحة في وقت التدخل. مستويات الأداء معرفة كالتالي: Low للدرجات 0–9، Medium للدرجات 10–14، وHigh للدرجات 15–20.
+تستخدم النسخة الحالية ملف الرياضيات من مجموعة **UCI Student Performance**. البيانات عامة ومجهولة الهوية. لا تستخدم `G1` أو `G2` كمدخلات عند التنبؤ بـ`G3` لتقليل تسرب المعلومات. مستويات الأداء معرفة كالتالي: Low للدرجات 0–9، Medium للدرجات 10–14، وHigh للدرجات 15–20. هذه الحدود تعليمية وليست سياسة مؤسسية.
 
-## التشغيل
+## التشغيل الكامل
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python scripts/train.py
+python scripts/run_analysis.py
 pytest -q
 streamlit run app/streamlit_app.py
 ```
 
-يقوم `scripts/train.py` بتنزيل المصدر الرسمي إلى `data/raw/`، تنظيفه، حفظ البيانات المعالجة، تدريب نماذج baseline وRidge وRandom Forest وGradient Boosting للانحدار، وتدريب baseline وLogistic Regression وRandom Forest للتصنيف. تحفظ النماذج المختارة في `models/`.
+ينشئ `train.py` البيانات المعالجة والنماذج الأساسية. ينشئ `run_analysis.py` رسوم EDA واختبارات إحصائية ونتائج GridSearch وتحليل الأخطاء وملفات SHAP. جميع النتائج تحفظ في `data/processed/` والرسوم في `reports/figures/`.
+
+## API
+
+بعد تثبيت الاعتمادات وتشغيل التدريب:
+
+```bash
+./scripts/run_api.sh
+```
+
+النقاط المتاحة هي `GET /health` و`POST /predict`. توثيق OpenAPI يظهر في `/docs`. لا تستخدم الواجهة لاتخاذ قرارات عالية الأثر بشأن الطلاب.
 
 ## بنية المستودع
 
 - `src/data_pipeline.py`: التنزيل والتنظيف وبناء الميزات.
-- `src/modeling.py`: preprocessing داخل Pipeline، التدريب والتقييم والحفظ.
+- `src/modeling.py`: Pipelines والتدريب والتقييم الأساسي.
+- `src/analysis.py`: EDA، الإحصاء، GridSearch، تحليل الأخطاء، permutation importance وSHAP.
 - `src/predict.py`: التحقق من المدخلات والتنبؤ.
-- `app/streamlit_app.py`: Dashboard أولية للتحليل والتنبؤ.
-- `tests/`: اختبارات تمنع regressions وتتحقق من منع التسرب.
-- `docs/data_dictionary.md`: قاموس البيانات والافتراضات.
-- `reports/report.md`: التقرير الأكاديمي الأولي وخطة القياس.
+- `src/api.py`: واجهة FastAPI.
+- `app/streamlit_app.py`: صفحات Overview وExploration وPrediction وExplainability وEvaluation.
+- `notebooks/`: الدفاتر الثمانية المطلوبة وفق التسلسل الأكاديمي.
+- `tests/`: اختبارات المعالجة، الميزات، النموذج، التنبؤ، والتحقق.
+- `docs/data_dictionary.md`: قاموس البيانات.
+- `reports/report.md`: التقرير الأكاديمي الكامل.
+- `reports/presentation.md`: مخطط العرض النهائي.
 
-## التقييم والتفسير
+## النتائج الفعلية
 
-تستخدم مهمة الانحدار MAE وRMSE وR²، مع RMSE عبر 5-fold cross-validation. تستخدم مهمة التصنيف Accuracy وMacro Precision وMacro Recall وMacro F1. ستضاف رسوم EDA وSHAP في المرحلة التالية بعد تثبيت نتائج التشغيل. التفسير يصف سلوك النموذج ولا يثبت علاقة سببية.
+في التشغيل الحالي على 395 سجلًا و34 عمودًا مشتقًا، لم توجد قيم مفقودة أو صفوف مكررة. حقق النموذج الأولي Random Forest للانحدار RMSE = 4.369 وMAE = 3.326 وR² = 0.232. بعد الضبط، بلغ RMSE = 4.411 وMAE = 3.352. لذلك لم يُستبدل النموذج الأولي في واجهة التنبؤ لأن معيار الانحدار الأساسي كان أفضل.
 
-## القيود والأخلاقيات
+في التصنيف، حقق Random Forest المضبوط Accuracy = 0.557 وMacro F1 = 0.497، متفوقًا على النموذج الأولي الذي حقق Accuracy = 0.506 وMacro F1 = 0.396. من المهم قراءة Macro F1 مع مصفوفة الالتباس لأن الفئات غير متوازنة.
 
-البيانات تعليمية عامة ومجهولة الهوية، ولا يجوز استخدام النموذج لاتخاذ قرارات عالية الأثر بشأن الطلاب. التعميم محدود بسياق المدارس والبلدان والوقت الذي جُمعت فيه البيانات. كما أن حدود الأداء المستخدمة للتصنيف افتراضات توضيحية وليست معيارًا رسميًا.
+أظهرت permutation importance أن `absences` و`failures` كانتا الأعلى في هذا النموذج. إحصائيًا، ارتبطت `failures` بالدرجة النهائية ارتباطًا سلبيًا دالًا، بينما لم يظهر ارتباط بيرسون للحضور دلالة عند α = 0.05. أظهر اختبار Welch فرقًا دالًا في الدرجات بين مجموعتي نية التعليم العالي. هذه علاقات إحصائية وليست إثباتًا للسببية.
 
-## المصدر
+## المصدر والتوثيق
 
 [1]: https://archive.ics.uci.edu/dataset/320/student+performance "UCI Student Performance Dataset"
+[2]: https://scikit-learn.org/stable/modules/compose.html "Scikit-learn Pipelines and composite estimators"
+[3]: https://shap.readthedocs.io/en/latest/ "SHAP documentation"
 
 ## الترخيص
 

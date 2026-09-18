@@ -1,14 +1,13 @@
-__pycache__/
-*.py[cod]
+*.pyc
 .pytest_cache/
+__pycache__/
 .venv/
-venv/
 .env
 .DS_Store
 .ipynb_checkpoints/
 models/*.joblib
-reports/figures/*.png
 data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+reports/figures/*.png
