@@ -1,3 +1,12 @@
+<div align="center">
+<img src="./assets/project-cover.png" alt="Student Performance Data Science" width="100%" />
+
+# Student Performance Data Science
+
+<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" /> <img src="https://img.shields.io/badge/Machine%20Learning-0f172a?style=for-the-badge&logo=scikit-learn&logoColor=F7931E" alt="Machine Learning" /> <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" />
+
+</div>
+
 # Student Performance Data Science
 
 مشروع علم بيانات قابل لإعادة الإنتاج لتحليل أداء طلاب المرحلة الثانوية وبناء مهمتي **الانحدار** للتنبؤ بالدرجة النهائية و**التصنيف** إلى Low/Medium/High. يتضمن المشروع جمع البيانات، التنظيف، EDA، اختبارات إحصائية، هندسة ميزات، مقارنة نماذج، GridSearch، تحليل أخطاء، SHAP، Dashboard، API، اختبارات، وتوثيق أكاديمي.
