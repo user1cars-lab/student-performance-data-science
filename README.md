@@ -18,6 +18,34 @@ pytest -q
 streamlit run app/streamlit_app.py
 ```
 
+### Windows PowerShell
+
+الأوامر `source .venv/bin/activate` خاصة بـLinux/macOS ولا تعمل في PowerShell. يجب أولًا فتح المجلد الذي يحتوي مباشرة على `requirements.txt` و`src` و`scripts`، وليس المجلد الأب الذي يحتوي مجلد المستودع.
+
+```powershell
+cd "E:\الجامعه\level 3\level 3 term 1\علم بيانات\عملي\project trm 1\student-performance-data-science-main"
+dir requirements.txt, scripts, src
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python scripts\train.py
+python scripts\run_analysis.py
+python -m pytest -q
+python -m streamlit run app\streamlit_app.py
+```
+
+يمكن تنفيذ الإعداد والتحقق تلقائيًا من جذر المستودع عبر:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\scripts\setup_windows.ps1
+```
+
+يتطلب المشروع Python 3.10 أو أحدث، ويوصى باستخدام Python 3.12. إذا كان الأمر `py -3.12` غير متاح، ثبّت Python من [المصدر الرسمي](https://www.python.org/downloads/windows/) ثم أعد فتح PowerShell.
+
+إذا ظهر `requirements.txt` أو `scripts\train.py` غير موجود، فأنت في المجلد الخطأ. نفّذ `dir` وتأكد من ظهور هذه الملفات قبل متابعة الأوامر. وإذا ظهر `ModuleNotFoundError` مثل `pandas` أو `fastapi`، فهذا يعني أن التثبيت لم يتم في البيئة الحالية؛ استخدم `python -m pip install -r requirements.txt` بعد تفعيل `.venv`.
+
 ينشئ `train.py` البيانات المعالجة والنماذج الأساسية. ينشئ `run_analysis.py` رسوم EDA واختبارات إحصائية ونتائج GridSearch وتحليل الأخطاء وملفات SHAP. جميع النتائج تحفظ في `data/processed/` والرسوم في `reports/figures/`.
 
 ## API
